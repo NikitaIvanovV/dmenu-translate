@@ -14,8 +14,9 @@ check_dep() {
 }
 
 # We don't check if dmenu is installed because someone
-# may want to replace it via DMENU var
+# may want to replace it via DMENU vars
 check_dep trans https://github.com/soimort/translate-shell
+check_dep xclip https://github.com/astrand/xclip
 
 load_config() {
 	config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/dmenu-translate"
@@ -126,7 +127,7 @@ translation="$(trans -b -target "$target" "$text")"
 } || {
 	next="$(printf "Copy: %s\nCopy temp file name\nView" "$(formatmenu "$translation")" |
 		eval "$DMENU_NEXT")" || exit 0
-	}
+}
 
 case "$next" in
 	'View')                open_term "$translation"; exit 0 ;;

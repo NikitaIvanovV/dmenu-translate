@@ -21,12 +21,16 @@ load_config() {
 	config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/dmenu-translate"
 	[ -d "$config_dir" ] || mkdir -p "$config_dir"
 
-	config_file="$config_dir/config.sh"
+	config_file="$config_dir/config.conf"
 	[ -f "$config_file" ] || cat > "$config_file" <<-EOF
-	#DMENU_LANG=ru en
-	#DMENU_TEXT=
-	#DMENU_NEXT=
-	#TRANS_LANGS=
+	# Languages that appear in the menu
+	TRANS_LANGS='ru en'
+
+	# You can change the following settings to replace dmenu
+	# with a different utility or set your options
+	DMENU_LANG=''
+	DMENU_TEXT=''
+	DMENU_NEXT=''
 	EOF
 
 	. "$config_file"

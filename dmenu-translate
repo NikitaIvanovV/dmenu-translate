@@ -1,0 +1,126 @@
+#!/bin/sh
+
+echo_err() {
+	notify-send -u critical "$0 error" "$1"
+}
+
+err() {
+	echo_err "$1"
+	exit 1
+}
+
+check_dep() {
+	command -v "$1" > /dev/null || err "$1 is required: $2"
+}
+
+# We don't check if dmenu is installed because someone
+# may want to replace it via DMENU var
+check_dep trans https://github.com/soimort/translate-shell
+
+load_config() {
+	config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/dmenu-translate"
+	[ -d "$config_dir" ] || mkdir -p "$config_dir"
+
+	config_file="$config_dir/config.sh"
+	[ -f "$config_file" ] || cat > "$config_file" <<-EOF
+	#DMENU_LANG=ru en
+	#DMENU_TEXT=
+	#DMENU_NEXT=
+	#TRANS_LANGS=
+	EOF
+
+	. "$config_file"
+
+	# Default values
+	: "${DMENU_LANG:=dmenu -i -p 'Translate: Into'}"
+	: "${DMENU_TEXT:=dmenu -i -p 'Translate: Text'}"
+	: "${DMENU_NEXT:=dmenu -i -p 'Translate: Next?'}"
+	: "${TRANS_LANGS:=ru en}"
+}
+
+formatmenu() {
+	echo "$1" | tr '\n' '  ' | sed 's/\s\{2,\}//g; s/^\(.\{30\}\).\+/\1.../; s/$/\n/'
+}
+
+get_selection() {
+	[ -n "$1" ] && sel='-selection clipboard' || sel=
+	xclip $sel -o 2>/dev/null
+}
+
+clip_menu() {
+	{ formatmenu "$1"; formatmenu "$2"; } |
+		sed -e 's/^\s*$//' -e '1s/^\(.\)/Primary: \1/' -e '2s/^\(.\)/Clipboard: \1/' |
+		sed '/^$/d'
+}
+
+lang_menu() {
+	echo "$TRANS_LANGS" | tr ' ' '\n'
+	echo '[Define]'
+}
+
+save_file() (
+	tmp="$(mktemp --tmpdir 'dmenu-translate.XXXXXX')"
+	echo "$1" > "$tmp"
+	echo "$tmp"
+)
+
+open_term() {
+	${TERMINAL:-'xterm'} -e ${PAGER:-'less'} "$(save_file "$1")"
+}
+
+get_text() {
+	echo "$2" | while IFS= read -r clip; do
+	[ "$1" = "$clip" ] && {
+		type="$(echo "$clip" | sed 's/^\(\w\+\):.*/\1/')"
+			case "$type" in
+				Primary)   echo "$primary"   ;;
+				Clipboard) echo "$clipboard" ;;
+			esac
+			exit 10
+		}
+	done
+
+	# If not found, just echo text
+	[ $? = 10 ] || echo "$1"
+}
+
+# Config
+load_config
+
+# Get selections
+clipboard="$(get_selection clip)"
+primary="$(get_selection)"
+
+[ "$clipboard" = "$primary" ] && primary=
+
+clip_menu="$(clip_menu "$primary" "$clipboard")"
+
+# Enter text
+text="$(printf '%s' "$clip_menu" | eval "$DMENU_TEXT")" || exit 0
+text="$(get_text "$text" "$clip_menu")"
+
+# Choose target language
+target="$(lang_menu | eval "$DMENU_LANG")" || exit 0
+
+# If Define chosen, define term and exit
+[ "$target" = '[Define]' ] && {
+	dict="$(trans -dictionary "$text")"
+	open_term "$(trans -dictionary "$text")"
+	exit 0
+}
+
+# Translate text
+translation="$(trans -b -target "$target" "$text")"
+[ -z "$translation" ] && err "Failed to translate"
+
+next="$(printf "View\nCopy: %s\nCopy temp file name" "$(formatmenu "$translation")" |
+	eval "$DMENU_NEXT")" || exit 0
+
+case "$next" in
+	'View')                open_term "$translation"; exit 0 ;;
+	'Copy temp file name') output="$(save_file "$translation")" ;;
+	'Copy'*)               output="$translation" ;;
+	*)                     exit 0 ;;
+esac
+
+echo "$output" | xclip -i -r -selection clipboard

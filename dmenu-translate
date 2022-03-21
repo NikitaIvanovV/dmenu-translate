@@ -36,6 +36,9 @@ load_config() {
 	# Set this to any value if you want always copy the
 	# translation
 	ALWAYS_COPY=
+
+	# Clipboard command must recieve text from standard input
+	CLIP_CMD='xclip -i -r -selection clipboard'
 	EOF
 
 	. "$config_file"
@@ -45,6 +48,9 @@ load_config() {
 	: "${DMENU_TEXT:=dmenu -i -p 'Translate: Text'}"
 	: "${DMENU_NEXT:=dmenu -i -p 'Translate: Next?'}"
 	: "${TRANS_LANGS:=ru en}"
+
+	# Check others
+	[ -z "$CLIP_CMD" ] && err 'CLIP_CMD setting cannot be empty!'
 }
 
 formatmenu() {
@@ -136,5 +142,6 @@ case "$next" in
 	*)                     exit 0 ;;
 esac
 
-echo "$output" | xclip -i -r -selection clipboard
+echo "$output" | eval "$CLIP_CMD" || err 'Failed to copy! Is CLIP_CMD setting set properly?'
+
 notify-send 'dmenu-translate' 'Translation copied to clipboard!'

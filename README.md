@@ -35,6 +35,9 @@ Just run:
 dmenu-translate
 ```
 
+You will be able to select contents of X primary selection and clipboard or type a word manually.
+Then, another menu will appear where you can choose a target language to translate to (see below on how to [configure](#configuration) this menu). Or you can choose `[Define]` option and the text will be looked up in a dictionary and printed in a new terminal window.
+
 I bound `Super-Ctrl-t` to call the script on my dwm build.
 So, whenever I encounter a word I don't know, I can select it with a mouse and get its definition or translation very quickly.
 You might want to do something similar on your system.

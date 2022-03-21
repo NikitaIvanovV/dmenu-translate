@@ -39,7 +39,7 @@ load_config() {
 }
 
 formatmenu() {
-	echo "$1" | tr '\n' '  ' | sed 's/\s\{2,\}//g; s/^\(.\{30\}\).\+/\1.../; s/$/\n/'
+	echo "$1" | tr '\n' '  ' | sed 's/\s\{3,\}//g; s/^\(.\{30\}\).\+/\1.../; s/$/\n/'
 }
 
 get_selection() {
@@ -49,12 +49,12 @@ get_selection() {
 
 clip_menu() {
 	{ formatmenu "$1"; formatmenu "$2"; } |
-		sed -e 's/^\s*$//' -e '1s/^\(.\)/Primary: \1/' -e '2s/^\(.\)/Clipboard: \1/' |
+		sed 's/^\s*$//; 1s/^\(.\)/Primary: \1/; 2s/^\(.\)/Clipboard: \1/' |
 		sed '/^$/d'
 }
 
 lang_menu() {
-	echo "$TRANS_LANGS" | tr ' ' '\n'
+	echo "$TRANS_LANGS" | sed 's/\s\+/\n/'
 	echo '[Define]'
 }
 

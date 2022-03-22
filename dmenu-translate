@@ -59,8 +59,8 @@ formatmenu() {
 }
 
 get_selection() {
-	[ -n "$1" ] && sel='-selection clipboard' || sel=
-	xclip $sel -o 2>/dev/null
+	[ -n "$1" ] && sel='clipboard' || sel='primary'
+	xclip -selection "$sel" -o 2>/dev/null
 }
 
 clip_menu() {

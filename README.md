@@ -5,7 +5,8 @@ Simple POSIX shell script for quick text translation with [dmenu](https://tools.
 ## Dependencies
 
 * [dmenu](https://tools.suckless.org/dmenu/) (or any other dmenu-like utility)
-* [translate-shell](https://github.com/soimort/translate-shell/)
+* trans from [translate-shell](https://github.com/soimort/translate-shell/)
+* notify-send from [libnotify](https://gitlab.gnome.org/GNOME/libnotify/)
 
 ## Installation
 

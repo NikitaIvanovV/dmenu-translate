@@ -74,6 +74,18 @@ lang_menu() {
 	echo '[Define]'
 }
 
+choose_next() {
+	if [ -n "$ALWAYS_COPY" ]; then
+		echo 'Copy'
+	else
+		eval "$DMENU_NEXT" <<-EOF
+		Copy: $(formatmenu "$translation")
+		Copy temp file name
+		View
+		EOF
+	fi
+}
+
 save_file() (
 	tmp="$(mktemp --tmpdir 'dmenu-translate.XXXXXX')"
 	echo "$1" > "$tmp"
@@ -129,14 +141,7 @@ target="$(lang_menu | eval "$DMENU_LANG")" || exit 0
 translation="$(trans -b -target "$target" "$text")"
 [ -z "$translation" ] && err "Failed to translate"
 
-[ -n "$ALWAYS_COPY" ] && {
-	next=Copy
-} || {
-	next="$(printf "Copy: %s\nCopy temp file name\nView" "$(formatmenu "$translation")" |
-		eval "$DMENU_NEXT")" || exit 0
-}
-
-case "$next" in
+case "$(choose_next "$translation")" in
 	'View')                open_term "$translation"; exit 0 ;;
 	'Copy temp file name') output="$(save_file "$translation")" ;;
 	'Copy'*)               output="$translation" ;;

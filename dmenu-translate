@@ -79,7 +79,7 @@ choose_next() {
 		echo 'Copy'
 	else
 		eval "$DMENU_NEXT" <<-EOF
-			Copy: $(formatmenu "$translation")
+			Copy: $(formatmenu "$1")
 			Copy temp file name
 			View
 		EOF

@@ -17,7 +17,7 @@ check_dep() {
 # may want to replace it via DMENU vars
 check_dep trans https://github.com/soimort/translate-shell
 check_dep xclip https://github.com/astrand/xclip
-check_dep libnotify https://gitlab.gnome.org/GNOME/libnotify
+check_dep notify-send
 
 load_config() {
 	config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/dmenu-translate"

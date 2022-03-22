@@ -25,21 +25,21 @@ load_config() {
 
 	config_file="$config_dir/config.conf"
 	[ -f "$config_file" ] || cat > "$config_file" <<-EOF
-	# Languages that appear in the menu
-	TRANS_LANGS='ru en'
+		# Languages that appear in the menu
+		TRANS_LANGS='ru en'
 
-	# You can change the following settings to replace dmenu
-	# with a different utility or set your options
-	DMENU_LANG=''
-	DMENU_TEXT=''
-	DMENU_NEXT=''
+		# You can change the following settings to replace dmenu
+		# with a different utility or set your options
+		DMENU_LANG=''
+		DMENU_TEXT=''
+		DMENU_NEXT=''
 
-	# Set this to any value if you want always copy the
-	# translation
-	ALWAYS_COPY=
+		# Set this to any value if you want always copy the
+		# translation
+		ALWAYS_COPY=
 
-	# Clipboard command must recieve text from standard input
-	CLIP_CMD='xclip -i -r -selection clipboard'
+		# Clipboard command must recieve text from standard input
+		CLIP_CMD='xclip -i -r -selection clipboard'
 	EOF
 
 	. "$config_file"
@@ -79,9 +79,9 @@ choose_next() {
 		echo 'Copy'
 	else
 		eval "$DMENU_NEXT" <<-EOF
-		Copy: $(formatmenu "$translation")
-		Copy temp file name
-		View
+			Copy: $(formatmenu "$translation")
+			Copy temp file name
+			View
 		EOF
 	fi
 }

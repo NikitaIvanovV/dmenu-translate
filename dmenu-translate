@@ -30,8 +30,8 @@ load_config() {
 
 		# You can change the following settings to replace dmenu
 		# with a different utility or set your options
-		DMENU_LANG=''
 		DMENU_TEXT=''
+		DMENU_LANG=''
 		DMENU_NEXT=''
 
 		# Set this to any value if you want always copy the
@@ -45,8 +45,8 @@ load_config() {
 	. "$config_file"
 
 	# Default values
-	: "${DMENU_LANG:=dmenu -i -p 'Translate: Into'}"
-	: "${DMENU_TEXT:=dmenu -i -p 'Translate: Text'}"
+	: "${DMENU_TEXT:=dmenu -p 'Translate: Text'}"
+	: "${DMENU_LANG:=dmenu -p 'Translate: Into'}"
 	: "${DMENU_NEXT:=dmenu -i -p 'Translate: Next?'}"
 	: "${TRANS_LANGS:=ru en}"
 
@@ -65,7 +65,7 @@ get_selection() {
 
 clip_menu() {
 	{ formatmenu "$1"; formatmenu "$2"; } |
-		sed 's/^\s*$//; 1s/^\(.\)/Primary: \1/; 2s/^\(.\)/Clipboard: \1/' |
+		sed 's/^\s*$//; 1s/^./Primary: &/; 2s/^./Clipboard: &/' |
 		sed '/^$/d'
 }
 
@@ -109,7 +109,7 @@ get_text() {
 	done
 
 	# If not found, just echo text
-	[ $? = 10 ] || echo "$1"
+	[ $? -ne 10 ] && echo "$1"
 }
 
 # Config
@@ -139,7 +139,7 @@ target="$(lang_menu | eval "$DMENU_LANG")" || exit 0
 
 # Translate text
 translation="$(trans -b -target "$target" "$text")"
-[ -z "$translation" ] && err "Failed to translate"
+[ -z "$translation" ] && err 'Failed to translate'
 
 case "$(choose_next "$translation")" in
 	'View')                open_term "$translation"; exit 0 ;;

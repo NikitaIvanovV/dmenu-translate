@@ -32,14 +32,12 @@ yay -S dmenu-translate-git
 
 ## Usage
 
-Just run:
+Just run `dmenu-translate` and the menu will appear:
 
-```sh
-dmenu-translate
-```
-
-You will be able to select contents of X primary selection and clipboard or type a word manually.
-Then, another menu will appear where you can choose a target language to translate to (see below on how to [configure](#configuration) this menu). Or you can choose `[Define]` option and the text will be looked up in a dictionary and printed in a new terminal window.
+1. Enter text to translate or choose X11 selection
+2. Select language to translate text into
+    * Or select `[Define]` option to view definition of a word
+3. View translation in a new terminal window or copy it to clipboard
 
 I bound `Super-Ctrl-t` to call the script on my dwm build.
 So, whenever I encounter a word I don't know, I can select it with a mouse and get its definition or translation very quickly.
@@ -48,5 +46,27 @@ You might want to do something similar on your system.
 ## Configuration
 
 By default, only English and Russian languages appear in the menu.
-You can alter this behavior (and many other settings also) by editing a configuration file located at `~/.config/dmenu-translate/config.sh`.
-If the file does not exist, run the script and the default configuration will be created.
+You can alter this behavior by editing a configuration file located at `~/.config/dmenu-translate/config.conf`.
+Run the script at least once to generate the file with all possible settings.
+
+For reference, here is the configuration file:
+
+<!-- CONFIG -->
+```sh
+# Languages that appear in the menu
+TRANS_LANGS='ru en'
+
+# You can change the following settings to replace dmenu
+# with a different utility or set your options
+DMENU_TEXT=''
+DMENU_LANG=''
+DMENU_NEXT=''
+
+# Set this to any value if you want always copy the
+# translation
+ALWAYS_COPY=
+
+# Clipboard command must recieve text from standard input
+CLIP_CMD='xclip -i -r -selection clipboard'
+```
+<!-- CONFIG -->

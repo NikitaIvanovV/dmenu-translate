@@ -2,13 +2,18 @@ PREFIX    ?= /usr/local
 BINPREFIX := $(DESTDIR)$(PREFIX)/bin
 SCRIPT    := dmenu-translate
 
-all:
+all: gen
 
-install:
+gen: README.md
+
+install: gen
 	install -d ${BINPREFIX}
 	install ${SCRIPT} ${BINPREFIX}
 
 uninstall:
 	rm -f $(PREFIX)/bin/${SCRIPT}
 
-.PHONY: all install uninstall
+README.md: ${SCRIPT}
+	./copyconfig.sh
+
+.PHONY: all gen install uninstall

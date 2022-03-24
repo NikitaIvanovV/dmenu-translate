@@ -2,6 +2,8 @@
 
 Simple POSIX shell script for quick text translation with [dmenu](https://tools.suckless.org/dmenu/).
 
+![showcase](showcase.webp)
+
 ## Dependencies
 
 * [dmenu](https://tools.suckless.org/dmenu/) (or any other dmenu-like utility)

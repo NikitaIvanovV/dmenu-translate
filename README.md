@@ -1,6 +1,6 @@
 # dmenu-translate
 
-Simple POSIX shell script for quick text translation with [dmenu](https://tools.suckless.org/dmenu/).
+[dmenu](https://tools.suckless.org/dmenu/) script for quick text translation with [translate-shell](https://github.com/soimort/translate-shell/)
 
 ![showcase](showcase.webp)
 

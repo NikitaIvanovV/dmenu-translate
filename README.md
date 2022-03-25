@@ -8,6 +8,7 @@
 
 * [dmenu](https://tools.suckless.org/dmenu/) (or any other dmenu-like utility)
 * trans from [translate-shell](https://github.com/soimort/translate-shell/)
+* [xclip](https://github.com/astrand/xclip/)
 * notify-send
 
 ## Installation

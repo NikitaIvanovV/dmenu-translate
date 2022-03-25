@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Save default config from script to file
+# Save default config to .temp
 sed -n '
 	/cat > "$config_file"/,/EOF/!d
 	/EOF/d
@@ -8,11 +8,11 @@ sed -n '
 	p
 	' dmenu-translate > .temp
 
-# Replace everything between <!-CONFIG --> tags
+# Replace code between <!-- CONFIG --> tags
 # with .temp content
 sed -i '
 	/<!-- CONFIG -->/,//!b
-	/<!-- CONFIG -->/{
+	/<!-- CONFIG -->/ {
 		n
 		r.temp
 		b

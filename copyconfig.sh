@@ -1,11 +1,10 @@
 #!/bin/sh
 
 # Save default config to .temp
-sed -n '
+sed '
 	/cat > "$config_file"/,/EOF/!d
 	/EOF/d
 	s/^\s*//
-	p
 	' dmenu-translate > .temp
 
 # Replace code between <!-- CONFIG --> tags

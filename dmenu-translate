@@ -70,7 +70,7 @@ clip_menu() {
 }
 
 lang_menu() {
-	echo "$TRANS_LANGS" | sed 's/\s\+/\n/'
+	echo "$TRANS_LANGS" | sed 's/\s\+/\n/g' | sed '/:/!s/^/:/'
 	echo '[Define]'
 }
 
@@ -138,7 +138,7 @@ target="$(lang_menu | eval "$DMENU_LANG")" || exit 0
 }
 
 # Translate text
-translation="$(trans -b -target "$target" "$text")"
+translation="$(trans -b "$target" "$text")"
 [ -z "$translation" ] && err 'Failed to translate'
 
 case "$(choose_next "$translation")" in

@@ -48,7 +48,7 @@ You might want to do something similar on your system.
 
 By default, only English and Russian languages appear in the menu.
 You can alter this behavior by editing a configuration file located at `~/.config/dmenu-translate/config.conf`.
-Run the script at least once to generate the file with all possible settings.
+Run the script at least once to generate the file with all available settings.
 
 For reference, here is the configuration file:
 

@@ -38,7 +38,7 @@ load_config() {
 		# translation
 		ALWAYS_COPY=
 
-		# Clipboard command must recieve text from standard input
+		# Clipboard command must receive text from standard input
 		CLIP_CMD='xclip -i -r -selection clipboard'
 	EOF
 

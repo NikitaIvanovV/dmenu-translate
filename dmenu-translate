@@ -16,42 +16,37 @@ check_dep() {
 # We don't check if dmenu is installed because someone
 # may want to replace it via DMENU vars
 check_dep trans https://github.com/soimort/translate-shell
-check_dep xclip https://github.com/astrand/xclip
 check_dep notify-send
 
 load_config() {
 	config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/dmenu-translate"
 	[ -d "$config_dir" ] || mkdir -p "$config_dir"
 
-	config_file="$config_dir/config.conf"
-	[ -f "$config_file" ] || cat > "$config_file" <<-EOF
-		# Languages that appear in the menu
-		TRANS_LANGS='ru en'
-
-		# You can change the following settings to replace dmenu
-		# with a different utility or set your options
-		DMENU_TEXT=''
-		DMENU_LANG=''
-		DMENU_NEXT=''
-
-		# Set this to any value if you want always copy the
-		# translation
-		ALWAYS_COPY=
-
-		# Clipboard command must receive text from standard input
-		CLIP_CMD='xclip -i -r -selection clipboard'
-	EOF
+	config_file="$config_dir/config.sh"
+	[ -f "$config_file" ] || touch "$config_file"
 
 	. "$config_file"
 
-	# Default values
-	: "${DMENU_TEXT:=dmenu -p 'Translate: Text'}"
-	: "${DMENU_LANG:=dmenu -p 'Translate: Into'}"
-	: "${DMENU_NEXT:=dmenu -i -p 'Translate: Next?'}"
-	: "${TRANS_LANGS:=ru en}"
-
 	# Check others
-	[ -z "$CLIP_CMD" ] && err 'CLIP_CMD setting cannot be empty!'
+	if [ -n "$WAYLAND_DISPLAY" ]; then
+		: "${CLIP_COPY:=wl-copy -n}"
+		: "${CLIP_PASTE_CLIP:=wl-paste}"
+		: "${CLIP_PASTE_PRIM:=wl-paste -p}"
+		: "${DMENU:=wmenu}"
+		: "${TERMINAL=foot}"
+	else
+		: "${CLIP_COPY:=xclip -i -r -selection clipboard}"
+		: "${CLIP_PASTE_CLIP:=xclip -o -selection clipboard}"
+		: "${CLIP_PASTE_PRIM:=xclip -o -selection primary}"
+		: "${DMENU:=dmenu}"
+		: "${TERMINAL=xterm}"
+	fi
+
+	# Default values
+	: "${TRANS_LANGS:=:ru :en}"
+	: "${DMENU_TEXT:=${DMENU} -i -p 'Translate: Text'}"
+	: "${DMENU_LANG:=${DMENU} -i -p 'Translate: Into'}"
+	: "${DMENU_NEXT:=${DMENU} -i -p 'Translate: Next?'}"
 }
 
 formatmenu() {
@@ -59,8 +54,7 @@ formatmenu() {
 }
 
 get_selection() {
-	[ -n "$1" ] && sel='clipboard' || sel='primary'
-	xclip -selection "$sel" -o 2>/dev/null
+	[ -n "$1" ] && eval "$CLIP_PASTE_CLIP" || eval "$CLIP_PASTE_PRIM"
 }
 
 clip_menu() {
@@ -93,7 +87,7 @@ save_file() (
 )
 
 open_term() {
-	${TERMINAL:-'xterm'} -e ${PAGER:-'less'} "$(save_file "$1")"
+	${TERMINAL} -e ${PAGER:-'less'} "$(save_file "$1")"
 }
 
 get_text() {
@@ -118,8 +112,6 @@ load_config
 # Get selections
 clipboard="$(get_selection clip)"
 primary="$(get_selection)"
-
-[ "$clipboard" = "$primary" ] && primary=
 
 clip_menu="$(clip_menu "$primary" "$clipboard")"
 
@@ -148,6 +140,6 @@ case "$(choose_next "$translation")" in
 	*)                     exit 0 ;;
 esac
 
-echo "$output" | eval "$CLIP_CMD" || err 'Failed to copy! Is CLIP_CMD setting set properly?'
+echo "$output" | eval "$CLIP_COPY" || err 'Failed to copy! Is CLIP_COPY setting set properly?'
 
 notify-send 'dmenu-translate' 'Translation copied to clipboard!'

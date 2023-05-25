@@ -52,6 +52,9 @@ You might want to do something similar on your system.
 
 The script respects `TERMINAL` and `PAGER` environmental variables.
 
+You can pass addition arguments to the dmenu commands
+by passing them to the script like this: `dmenu-translate -arg1 -arg2`
+
 ## Configuration
 
 By default, only English and Russian languages appear in the menu.

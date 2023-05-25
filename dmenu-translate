@@ -25,6 +25,9 @@ load_config() {
 	config_file="$config_dir/config.sh"
 	[ -f "$config_file" ] || touch "$config_file"
 
+	old_config_file="$config_dir/config.conf"
+	[ -f "$old_config_file" ] && notify-send "dmenu-translate warning" "Found old configuration file at <code>$old_config_file</code>, which is no longer supported. Please move your settings to a new file at <code>$config_file</code> and delete the old one."
+
 	. "$config_file"
 
 	# Check others

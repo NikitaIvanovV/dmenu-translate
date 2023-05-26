@@ -72,11 +72,13 @@ lang_menu() {
 }
 
 choose_next() {
+	t="$1"
+	shift
 	if [ -n "$ALWAYS_COPY" ]; then
 		echo 'Copy'
 	else
 		eval "$DMENU_NEXT" "$@" <<-EOF
-			Copy: $(formatmenu "$1")
+			Copy: $(formatmenu "$t")
 			Copy temp file name
 			View
 		EOF
@@ -136,7 +138,7 @@ target="$(lang_menu | eval "$DMENU_LANG" "$@")" || exit 0
 translation="$(trans -b "$target" "$text")"
 [ -z "$translation" ] && err 'Failed to translate'
 
-case "$(choose_next "$translation")" in
+case "$(choose_next "$translation" "$@")" in
 	'View')                open_term "$translation"; exit 0 ;;
 	'Copy temp file name') output="$(save_file "$translation")" ;;
 	'Copy'*)               output="$translation" ;;
